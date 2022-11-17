@@ -15,15 +15,19 @@ defmodule Control.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Control.PubSub},
       # Start the Endpoint (http/https)
-      ControlWeb.Endpoint
+      ControlWeb.Endpoint,
       # Start a worker by calling: Control.Worker.start_link(arg)
       # {Control.Worker, arg}
+
+      Supervisor.child_spec(Control.Testes.Genserver, id: 1),
+      {DynamicSupervisor, strategy: :one_for_one, name: Control.DynamicSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Control.Supervisor]
     Supervisor.start_link(children, opts)
+
   end
 
   # Tell Phoenix to update the endpoint configuration
